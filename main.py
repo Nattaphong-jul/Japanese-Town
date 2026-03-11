@@ -3,6 +3,10 @@ import os
 from math import radians
 import math
 
+# Reset to Object Mode
+if bpy.ops.object.mode_set.poll():
+    bpy.ops.object.mode_set(mode='OBJECT')
+
 # Delete all objects
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
@@ -98,4 +102,3 @@ add_solidify(base, thickness=1)
 ApplyAll()
 
 bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)
-
