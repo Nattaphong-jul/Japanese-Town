@@ -31,4 +31,54 @@ def create_plane(name, location, scale):
     
     return plane
 
+def add_solidify(obj, thickness=0.5):
+    """Adds a Solidify modifier to the given object."""
+    if obj and obj.type == 'MESH':
+        # Add the modifier
+        mod = obj.modifiers.new(name="MySolidify", type='SOLIDIFY')
+        
+        # Set the thickness
+        mod.thickness = thickness
+        
+        # Offset
+        mod.offset = -1 
+        return mod
+    return None
+
+# Apply All
+def ApplyAll():
+    bpy.ops.object.convert(target='MESH')
+
 base = create_plane("Base", (0,0,0), (10,10,1))
+
+add_solidify(base, thickness=2)
+ApplyAll()
+
+
+def bevel_vertices_ops(obj, vertex_indices, offset=0.5, segments=10):
+    # Make sure it is OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+    # Clear All Selection
+    for v in obj.data.vertices: v.select = False
+    for e in obj.data.edges: e.select = False
+    for f in obj.data.polygons: f.select = False
+    
+    # Select all assigned edges
+    for idx in vertex_indices:
+        obj.data.vertices[idx].select = True
+        
+    # Change to EDIT Mode
+    bpy.ops.object.mode_set(mode='EDIT')
+    
+    # Bevel Edge
+    bpy.ops.mesh.bevel(
+        offset=offset, 
+        segments=segments, 
+        affect='EDGES'
+    )
+    
+    # Switch back to OBJECT Mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+
+bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=12)
