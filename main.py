@@ -2,6 +2,7 @@ import bpy
 import os
 from math import radians
 import math
+import bmesh
 
 # Reset to Object Mode
 if bpy.ops.object.mode_set.poll():
@@ -92,7 +93,6 @@ def bevel_vertices_ops(obj, vertex_indices, offset=0.5, segments=10):
     bpy.ops.object.mode_set(mode='OBJECT')
 
 
-
 index_overlay(True)
 
 
@@ -100,5 +100,74 @@ base = create_plane("Base", (0,0,0), (10,10,1))
 
 add_solidify(base, thickness=1)
 ApplyAll()
+
+
+def add_loop_cut(obj, edge_indices, cuts=1, offset=0.0):
+    # Make sure we are in EDIT mode
+    bpy.ops.object.mode_set(mode='EDIT')
+    
+    # Create a BMesh instance from the active edit mesh
+    bm = bmesh.from_edit_mesh(obj.data)
+    
+    # Ensure the internal index table is updated so we can access edges by index
+    bm.edges.ensure_lookup_table()
+    
+    # Collect the edges we want to cut across
+    try:
+        edges_to_cut = [bm.edges[i] for i in edge_indices]
+    except IndexError:
+        print("Error: One or more edge indices are out of range.")
+        bpy.ops.object.mode_set(mode='OBJECT')
+        return
+        
+    # --- Store edge vectors and midpoints before cutting ---
+    edge_data = []
+    reference_vector = None # We will use this to align all other vectors
+    
+    if offset != 0.0 and cuts == 1:
+        for e in edges_to_cut:
+            v1, v2 = e.verts
+            vec = v2.co - v1.co
+            
+            # FIXED: Make sure all slide vectors point in the same direction!
+            if reference_vector is None:
+                reference_vector = vec # Set the first edge as the master direction
+            elif vec.dot(reference_vector) < 0:
+                vec = -vec # If this edge points the opposite way, flip it
+                
+            edge_data.append({
+                "midpoint": (v1.co + v2.co) / 2.0,
+                "vector": vec
+            })
+    
+    # Perform the loop cut (subdivide the edge ring)
+    bmesh.ops.subdivide_edgering(
+        bm,
+        edges=edges_to_cut,
+        cuts=cuts,
+        profile_shape='LINEAR',
+        profile_shape_factor=0.0
+    )
+    
+    # --- Find the new vertices at the midpoints and slide them ---
+    if offset != 0.0 and cuts == 1:
+        offset = max(-1.0, min(1.0, offset)) # Keep offset between -1 and 1
+        
+        # Scan all vertices in the mesh
+        for v in bm.verts:
+            for data in edge_data:
+                # If a vertex is exactly where the old midpoint was, it's our new cut!
+                if (v.co - data["midpoint"]).length < 0.001:
+                    v.co += data["vector"] * (offset / 2.0)
+                    break
+    
+    # Update the mesh and return to OBJECT mode
+    bmesh.update_edit_mesh(obj.data)
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+
+index_overlay(True)
+
+add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=0.2)
 
 bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)
