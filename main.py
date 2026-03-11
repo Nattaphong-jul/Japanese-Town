@@ -7,7 +7,6 @@ import math
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 
-
 print_loc = 0
 def printout(text_content, name = 'text'):
     global print_loc
@@ -19,6 +18,16 @@ def printout(text_content, name = 'text'):
     print_loc -= 1
     return text
 
+# Show vertex index
+def index_overlay(b: bool = True):
+    bpy.context.preferences.view.show_developer_ui = True
+
+    for area in bpy.context.screen.areas:
+        if area.type == 'VIEW_3D':
+            for space in area.spaces:
+                if space.type == 'VIEW_3D':
+                    space.overlay.show_extra_indices = b
+    return b
 
 def create_plane(name, location, scale):
     # Add Plain
@@ -49,12 +58,6 @@ def add_solidify(obj, thickness=0.5):
 def ApplyAll():
     bpy.ops.object.convert(target='MESH')
 
-base = create_plane("Base", (0,0,0), (10,10,1))
-
-add_solidify(base, thickness=2)
-ApplyAll()
-
-
 def bevel_vertices_ops(obj, vertex_indices, offset=0.5, segments=10):
     # Make sure it is OBJECT mode
     bpy.ops.object.mode_set(mode='OBJECT')
@@ -71,6 +74,9 @@ def bevel_vertices_ops(obj, vertex_indices, offset=0.5, segments=10):
     # Change to EDIT Mode
     bpy.ops.object.mode_set(mode='EDIT')
     
+    # Ensure Blender is in Vertex Selection Mode
+    bpy.ops.mesh.select_mode(type='VERT')
+    
     # Bevel Edge
     bpy.ops.mesh.bevel(
         offset=offset, 
@@ -81,4 +87,15 @@ def bevel_vertices_ops(obj, vertex_indices, offset=0.5, segments=10):
     # Switch back to OBJECT Mode
     bpy.ops.object.mode_set(mode='OBJECT')
 
-bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=12)
+
+
+index_overlay(True)
+
+
+base = create_plane("Base", (0,0,0), (10,10,1))
+
+add_solidify(base, thickness=1)
+ApplyAll()
+
+bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)
+
