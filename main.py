@@ -45,6 +45,45 @@ def create_plane(name, location, scale):
     
     return plane
 
+def create_cube(name, location, scale):
+    # Add Cube
+    bpy.ops.mesh.primitive_cube_add(location=location)
+    
+    cube = bpy.context.object
+    cube.name = name
+    
+    cube.scale = (scale[0], scale[1], scale[2])
+    
+    return cube
+
+def create_triangle(name, location, scale):
+    # Create a new mesh and object
+    mesh = bpy.data.meshes.new("TriangleMesh")
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    
+    # Create bmesh and add vertices
+    bm = bmesh.new()
+    v0 = bm.verts.new((0, 0, 0))
+    v1 = bm.verts.new((scale[0], 0, 0))
+    v2 = bm.verts.new((scale[0]/2, scale[1], 0))
+    
+    # Create face
+    bm.faces.new([v0, v1, v2])
+    
+    # Update mesh
+    bm.to_mesh(mesh)
+    bm.free()
+    mesh.update()
+    
+    # Set location and scale
+    obj.location = location
+    obj.scale = scale
+    
+    return obj
+
 def add_solidify(obj, thickness=0.5):
     """Adds a Solidify modifier to the given object."""
     if obj and obj.type == 'MESH':
@@ -91,16 +130,6 @@ def bevel_vertices_ops(obj, vertex_indices, offset=0.5, segments=10):
     
     # Switch back to OBJECT Mode
     bpy.ops.object.mode_set(mode='OBJECT')
-
-
-index_overlay(True)
-
-
-base = create_plane("Base", (0,0,0), (10,10,1))
-
-add_solidify(base, thickness=1)
-ApplyAll()
-
 
 def add_loop_cut(obj, edge_indices, cuts=1, offset=0.0):
     # Make sure we are in EDIT mode
@@ -168,6 +197,15 @@ def add_loop_cut(obj, edge_indices, cuts=1, offset=0.0):
 
 index_overlay(True)
 
+base = create_plane("Base", (0,0,0), (10,10,1))
+
+add_solidify(base, thickness=1)
+ApplyAll()
+
 add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=0.2)
+add_loop_cut(base, edge_indices=[0, 12, 4, 13], cuts=1, offset=0.2)
 
 bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)
+
+house_body = create_cube("House Body", (-1,1,1), (1.5,1.5,1))
+tri = create_triangle("Roof", (-1,1,2.5), (1.5,1.5,1))
