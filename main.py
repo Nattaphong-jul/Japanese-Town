@@ -233,6 +233,52 @@ def grab_move(obj, mode, index, direction, distance):
     # Switch back to OBJECT mode
     bpy.ops.object.mode_set(mode='OBJECT')
 
+def extrude(obj, mode, index, direction, distance):
+    # Ensure we are in OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+    # Clear all selections
+    for v in obj.data.vertices: v.select = False
+    for e in obj.data.edges: e.select = False
+    for f in obj.data.polygons: f.select = False
+    
+    # Selection mode
+    if mode == 'VERT':
+        obj.data.vertices[index].select = True
+    elif mode == 'EDGE':
+        obj.data.edges[index].select = True
+    elif mode == 'FACE':
+        obj.data.polygons[index].select = True
+    else:
+        print("Invalid mode. Use 'VERT', 'EDGE', or 'FACE'.")
+        return
+    
+    # Switch to EDIT mode
+    bpy.ops.object.mode_set(mode='EDIT')
+    
+    # Set the pivot point to individual origins
+    bpy.context.scene.tool_settings.transform_pivot_point = 'INDIVIDUAL_ORIGINS'
+    
+    # Extrude the selection
+    bpy.ops.mesh.extrude_context()
+    
+    # Move in the specified direction
+    if direction == 'UP':
+        bpy.ops.transform.translate(value=(0, 0, distance))
+    elif direction == 'DOWN':
+        bpy.ops.transform.translate(value=(0, 0, -distance))
+    elif direction == 'LEFT':
+        bpy.ops.transform.translate(value=(-distance, 0, 0))
+    elif direction == 'RIGHT':
+        bpy.ops.transform.translate(value=(distance, 0, 0))
+    elif direction == 'FORWARD':
+        bpy.ops.transform.translate(value=(0, distance, 0))
+    elif direction == 'BACKWARD':
+        bpy.ops.transform.translate(value=(0, -distance, 0))
+    
+    # Switch back to OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+
 def apply_color(target_obj, mat_name="Color", color=(1.0, 1.0, 1.0, 1.0), metallic=0.0, roughness=0.5, emit_strength=0.0):
     
     # Create New Material
@@ -273,6 +319,8 @@ add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=0.2)
 add_loop_cut(base, edge_indices=[0, 12, 4, 13], cuts=1, offset=0.2)
 
 bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)
+
+extrude(base, 'FACE', 3, 'DOWN', 0.1)
 
 house_body = create_cube("House Body", (-1,1,1), (1.5,1.5,1))
 # tri = create_triangle("Roof", (-1,1,2.5), (1.5,1.5,1))
