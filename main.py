@@ -56,6 +56,29 @@ def create_cube(name, location, scale):
     
     return cube
 
+def create_sphere(name, location, scale, radius=1.0, segments=32, rings=16):
+    # Add Sphere
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=radius, location=location, segments=segments, ring_count=rings)
+    
+    sphere = bpy.context.object
+    sphere.name = name
+    
+    sphere.scale = (scale[0], scale[1], scale[2])
+    
+    return sphere
+
+def shade_smooth(obj):
+    # Make sure the object is a mesh
+    if obj.type != 'MESH':
+        return
+        
+    # Smooth polygons
+    for poly in obj.data.polygons:
+        poly.use_smooth = True
+            
+    # Update mesh data
+    obj.data.update()
+
 def create_triangle(name, location, scale):
     # Create a new mesh and object
     mesh = bpy.data.meshes.new("TriangleMesh")
@@ -330,3 +353,6 @@ add_loop_cut(house_body , edge_indices=[11, 5], cuts=1, offset=0)
 grab_move(house_body, 'EDGE', 14, 'UP', 1)
 
 apply_color(house_body, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
+
+ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
+shade_smooth(ball)
