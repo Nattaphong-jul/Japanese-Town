@@ -233,6 +233,34 @@ def grab_move(obj, mode, index, direction, distance):
     # Switch back to OBJECT mode
     bpy.ops.object.mode_set(mode='OBJECT')
 
+def apply_color(target_obj, mat_name="Color", color=(1.0, 1.0, 1.0, 1.0), metallic=0.0, roughness=0.5, emit_strength=0.0):
+    
+    # Create New Material
+    myMat = bpy.data.materials.new(name=mat_name)
+    myMat.use_nodes = True
+    
+    # Get Principled BSDF node
+    bsdf = myMat.node_tree.nodes.get("Principled BSDF")
+    
+    # Set the values directly
+    if bsdf:
+        bsdf.inputs['Base Color'].default_value = color
+        bsdf.inputs['Metallic'].default_value = metallic
+        bsdf.inputs['Roughness'].default_value = roughness
+        
+        # Emission
+        emit_socket = 'Emission Color' if 'Emission Color' in bsdf.inputs else 'Emission'
+        bsdf.inputs[emit_socket].default_value = color 
+        
+        # Emission Strength
+        if 'Emission Strength' in bsdf.inputs:
+            bsdf.inputs['Emission Strength'].default_value = emit_strength
+
+    # Clear existing materials and assign the new one
+    target_obj.data.materials.clear()
+    target_obj.data.materials.append(myMat)
+    
+    return myMat
 
 index_overlay(True)
 
@@ -252,3 +280,5 @@ house_body = create_cube("House Body", (-1,1,1), (1.5,1.5,1))
 add_loop_cut(house_body , edge_indices=[11, 5], cuts=1, offset=0)
 
 grab_move(house_body, 'EDGE', 14, 'UP', 1)
+
+apply_color(house_body, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
