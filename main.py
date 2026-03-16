@@ -121,6 +121,28 @@ def add_solidify(obj, thickness=0.5):
         return mod
     return None
 
+def simple_deform(obj, angle, axis='Z', mode='TWIST', limit=None):
+    if obj and obj.type == 'MESH':
+        # Add the Simple Deform modifier
+        mod = obj.modifiers.new(name="SimpleDeform", type='SIMPLE_DEFORM')
+        
+        # Set the angle in radians
+        mod.angle = radians(angle)
+        
+        # Set the deformation axis
+        mod.deform_axis = axis
+        
+        # Set the deformation mode (Not working for now T-T)
+        # mod.mode = mode
+        
+        # Set limits
+        if limit is not None:
+            mod.limits[0] = limit[0]  # Lower
+            mod.limits[1] = limit[1]  # Upper
+        
+        return mod
+    return 'Something'
+
 # Apply All
 def ApplyAll():
     bpy.ops.object.convert(target='MESH')
@@ -356,3 +378,7 @@ apply_color(house_body, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength
 
 ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
 shade_smooth(ball)
+
+plane = create_plane("Ground", (0,0,10), (20,20,1))
+add_loop_cut(plane, edge_indices=[3, 1], cuts=10, offset=0)
+simple_deform(plane, angle=45, axis='Z', limit=(-0.5, 0.5))
