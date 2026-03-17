@@ -143,6 +143,66 @@ def simple_deform(obj, angle, axis='Z', mode='TWIST', limit=None):
         return mod
     return 'Something'
 
+def join_elements(obj, indices, mode='EDGE'):
+    if not obj or obj.type != 'MESH':
+        return None
+    
+    # Ensure that Blender is in OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+    # Clear all selections
+    for v in obj.data.vertices: v.select = False
+    for e in obj.data.edges: e.select = False
+    for f in obj.data.polygons: f.select = False
+    
+    # Switch to EDIT mode
+    bpy.ops.object.mode_set(mode='EDIT')
+    
+    # Create a BMesh instance from the active edit mesh
+    bm = bmesh.from_edit_mesh(obj.data)
+    bm.edges.ensure_lookup_table()
+    bm.verts.ensure_lookup_table()
+    
+    # Select and join the specified elements
+    if mode == 'EDGE':
+        # Bridge edge loops (Ctrl+F equivalent for edges)
+        selected_edges = []
+        for idx in indices:
+            if idx < len(bm.edges):
+                bm.edges[idx].select = True
+                selected_edges.append(bm.edges[idx])
+        
+        # Apply bridge operation
+        if len(selected_edges) >= 2:
+            try:
+                bmesh.ops.bridge_loops(bm, edges=selected_edges)
+            except Exception as e:
+                print(f"Bridge operation failed: {e}")
+    
+    elif mode == 'VERT':
+        # Join vertices (corners)
+        selected_verts = []
+        for idx in indices:
+            if idx < len(bm.verts):
+                bm.verts[idx].select = True
+                selected_verts.append(bm.verts[idx])
+        
+        # For vertices, merge them together
+        if len(selected_verts) >= 2:
+            try:
+                bmesh.ops.pointmerge(bm, verts=selected_verts, keep_edges=False)
+            except Exception as e:
+                print(f"Point merge operation failed: {e}")
+    
+    # Update the mesh and return to OBJECT mode
+    bmesh.update_edit_mesh(obj.data)
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+    return obj
+
+
+
+
 # Apply All
 def ApplyAll():
     bpy.ops.object.convert(target='MESH')
