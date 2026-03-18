@@ -474,20 +474,22 @@ camera.name = "Camera"
 bpy.context.scene.camera = camera
 transform(camera, rotation=(65, 0, -135))
 
+
+# Base ======================================================================================
 base = create_plane("Base", (0,0,1), (10,10,1))
 
 add_solidify(base, thickness=1)
 ApplyAll()
 
-add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=0.2)
-add_loop_cut(base, edge_indices=[0, 12, 4, 13], cuts=1, offset=0.2)
+add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=-0.3)
+add_loop_cut(base, edge_indices=[0, 12, 4, 13], cuts=1, offset=0)
 add_loop_cut(base, edge_indices=[1, 18, 27, 3, 7, 25, 17, 5], cuts=1, offset=0.4)
 add_loop_cut(base, edge_indices=[1, 18, 27, 35, 34, 25, 17, 5], cuts=1, offset=0)
 add_loop_cut(base, edge_indices=[1, 18, 27, 35, 34, 25, 17, 5], cuts=1, offset=0)
 add_loop_cut(base, edge_indices=[2, 37, 53, 69, 15, 14, 71, 55, 39, 6], cuts=1, offset=0)
 
 
-bpy.ops.object.mode_set(mode='EDIT')
+# bpy.ops.object.mode_set(mode='EDIT')
 
 extrude(base, 'FACE', 14, 'DOWN', 0.5)
 extrude(base, 'FACE', 22, 'DOWN', 0.5)
@@ -497,13 +499,15 @@ delete_poly(base, 'EDGE', 52)
 delete_poly(base, 'EDGE', 60)
 bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)   
 # bpy.ops.object.mode_set(mode='EDIT')
+# =============================================================================================
 
-house_body = create_cube("House Body", location=(-6,1,2), scale=(1.5,1.5,1))
-# # tri = create_triangle("Roof", (-1,1,2.5), (1.5,1.5,1))
+# House =======================================================================================
+house_body = create_cube("House Body", location=(-4.5,-8,2), scale=(1.5,1.5,1))
 
-# add_loop_cut(house_body , edge_indices=[11, 5], cuts=1, offset=0)
+add_loop_cut(house_body , edge_indices=[2, 8], cuts=1, offset=0)
 
-# grab_move(house_body, 'EDGE', 14, 'UP', 1)
+grab_move(house_body, 'EDGE', 14, 'UP', 1)
+# =============================================================================================
 
 # apply_color(house_body, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
 
