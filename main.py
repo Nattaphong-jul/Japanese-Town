@@ -467,6 +467,13 @@ def transform(obj, location=None, rotation=None, scale=None):
 
 index_overlay(True)
 
+# Camera Setup
+bpy.ops.object.camera_add(location=(-40, 40, 30))
+camera = bpy.context.object
+camera.name = "Camera"
+bpy.context.scene.camera = camera
+transform(camera, rotation=(65, 0, -135))
+
 base = create_plane("Base", (0,0,1), (10,10,1))
 
 add_solidify(base, thickness=1)
@@ -481,7 +488,6 @@ add_loop_cut(base, edge_indices=[2, 37, 53, 69, 15, 14, 71, 55, 39, 6], cuts=1, 
 
 
 bpy.ops.object.mode_set(mode='EDIT')
-# bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)   
 
 extrude(base, 'FACE', 14, 'DOWN', 0.5)
 extrude(base, 'FACE', 22, 'DOWN', 0.5)
@@ -489,9 +495,10 @@ extrude(base, 'FACE', 38, 'DOWN', 0.5)
 
 delete_poly(base, 'EDGE', 52)
 delete_poly(base, 'EDGE', 60)
+bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)   
 # bpy.ops.object.mode_set(mode='EDIT')
 
-# house_body = create_cube("House Body", (-1,1,2), (1.5,1.5,1))
+house_body = create_cube("House Body", location=(-6,1,2), scale=(1.5,1.5,1))
 # # tri = create_triangle("Roof", (-1,1,2.5), (1.5,1.5,1))
 
 # add_loop_cut(house_body , edge_indices=[11, 5], cuts=1, offset=0)
