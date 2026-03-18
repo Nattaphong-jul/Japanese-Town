@@ -413,6 +413,18 @@ def apply_color(target_obj, mat_name="Color", color=(1.0, 1.0, 1.0, 1.0), metall
     
     return myMat
 
+def transform(obj, location=None, rotation=None, scale=None):
+    if location:
+        obj.location = location
+    if rotation:
+        obj.rotation_euler[0] = radians(rotation[0])
+        obj.rotation_euler[1] = radians(rotation[1])
+        obj.rotation_euler[2] = radians(rotation[2])
+    if scale:
+        obj.scale = scale
+    return obj
+
+
 index_overlay(True)
 
 base = create_plane("Base", (0,0,0), (10,10,1))
@@ -440,5 +452,6 @@ ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
 shade_smooth(ball)
 
 plane = create_plane("Ground", (0,0,10), (20,20,1))
-add_loop_cut(plane, edge_indices=[3, 1], cuts=10, offset=0)
+add_loop_cut(plane, edge_indices=[0, 2], cuts=10, offset=0)
 simple_deform(plane, angle=45, axis='Z', limit=(-0.5, 0.5))
+
