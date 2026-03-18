@@ -501,16 +501,34 @@ bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)
 # bpy.ops.object.mode_set(mode='EDIT')
 # =============================================================================================
 
-# House =======================================================================================
-house_body = create_cube("House Body", location=(-4.5,-8,2), scale=(1.5,1.5,1))
+# House 1 =====================================================================================
+house_1 = create_cube("House 1", location=(-4.5,-7,2), scale=(1.5,1.5,1))
+add_loop_cut(house_1 , edge_indices=[2, 8], cuts=1, offset=0)
+grab_move(house_1, 'EDGE', 14, 'UP', 1)
 
-add_loop_cut(house_body , edge_indices=[2, 8], cuts=1, offset=0)
-
-grab_move(house_body, 'EDGE', 14, 'UP', 1)
 # =============================================================================================
 
-# apply_color(house_body, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
+# House 2 =====================================================================================
+house_2 = create_cube("House 2", location=(0,-8,2), scale=(1.5,1.5,1))
+add_loop_cut(house_2 , edge_indices=[5, 11], cuts=1, offset=0)
+grab_move(house_2, 'EDGE', 14, 'UP', 1)
 
+# =============================================================================================
+
+# House 3 =====================================================================================
+house_3 = create_cube("House 3", location=(4.5,-8,2), scale=(1.5,1.5,1))
+add_loop_cut(house_3 , edge_indices=[2, 8], cuts=1, offset=0)
+grab_move(house_3, 'EDGE', 14, 'UP', 1)
+
+# =============================================================================================
+
+# House 4 =====================================================================================
+house_4 = create_cube("House 4", location=(0,-4,2), scale=(1.5,1.5,1))
+add_loop_cut(house_4 , edge_indices=[5, 11], cuts=1, offset=0)
+grab_move(house_4, 'EDGE', 14, 'UP', 1)
+
+# =============================================================================================
+# apply_color(house_1, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
 # ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
 # shade_smooth(ball)
 
