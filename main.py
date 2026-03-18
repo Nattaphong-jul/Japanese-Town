@@ -23,6 +23,11 @@ def printout(text_content, name = 'text'):
     print_loc -= 1
     return text
 
+def clear_selection(obj): # Clear all selections in the mesh
+    for v in obj.data.vertices: v.select = False
+    for e in obj.data.edges: e.select = False
+    for f in obj.data.polygons: f.select = False
+
 # Show vertex index
 def index_overlay(b: bool = True):
     bpy.context.preferences.view.show_developer_ui = True
@@ -151,9 +156,7 @@ def join_elements(obj, indices, mode='EDGE'):
     bpy.ops.object.mode_set(mode='OBJECT')
     
     # Clear all selections
-    for v in obj.data.vertices: v.select = False
-    for e in obj.data.edges: e.select = False
-    for f in obj.data.polygons: f.select = False
+    clear_selection(obj)
     
     # Switch to EDIT mode
     bpy.ops.object.mode_set(mode='EDIT')
@@ -212,9 +215,7 @@ def bevel_vertices_ops(obj, vertex_indices, offset=0.5, segments=10):
     bpy.ops.object.mode_set(mode='OBJECT')
     
     # Clear All Selection
-    for v in obj.data.vertices: v.select = False
-    for e in obj.data.edges: e.select = False
-    for f in obj.data.polygons: f.select = False
+    clear_selection(obj)
     
     # Select all assigned edges
     for idx in vertex_indices:
@@ -304,9 +305,7 @@ def grab_move(obj, mode, index, direction, distance):
     bpy.ops.object.mode_set(mode='OBJECT')
     
     # Clear all selections
-    for v in obj.data.vertices: v.select = False
-    for e in obj.data.edges: e.select = False
-    for f in obj.data.polygons: f.select = False
+    clear_selection(obj)
     
     # Select the specified element based on mode and index
     if mode == 'VERT':
@@ -343,9 +342,7 @@ def extrude(obj, mode, index, direction, distance):
     bpy.ops.object.mode_set(mode='OBJECT')
     
     # Clear all selections
-    for v in obj.data.vertices: v.select = False
-    for e in obj.data.edges: e.select = False
-    for f in obj.data.polygons: f.select = False
+    clear_selection(obj)
     
     # Selection mode
     if mode == 'VERT':
@@ -380,6 +377,49 @@ def extrude(obj, mode, index, direction, distance):
         bpy.ops.transform.translate(value=(0, distance, 0))
     elif direction == 'BACKWARD':
         bpy.ops.transform.translate(value=(0, -distance, 0))
+    
+    # Switch back to OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+
+def delete_poly(obj, mode, index):
+    if not obj or obj.type != 'MESH':
+        print("Invalid object or not a mesh.")
+        return
+    
+    # Ensure we are in OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+    # Clear all selections
+    clear_selection(obj)
+    
+    # Select the specified element based on mode and index
+    if mode == 'VERT':
+        if index < len(obj.data.vertices):
+            obj.data.vertices[index].select = True
+        else:
+            print(f"Vertex index {index} out of range.")
+            return
+    elif mode == 'EDGE':
+        if index < len(obj.data.edges):
+            obj.data.edges[index].select = True
+        else:
+            print(f"Edge index {index} out of range.")
+            return
+    elif mode == 'FACE':
+        if index < len(obj.data.polygons):
+            obj.data.polygons[index].select = True
+        else:
+            print(f"Face index {index} out of range.")
+            return
+    else:
+        print("Invalid mode. Use 'VERT', 'EDGE', or 'FACE'.")
+        return
+    
+    # Switch to EDIT mode
+    bpy.ops.object.mode_set(mode='EDIT')
+    
+    # Delete the selected element
+    bpy.ops.mesh.delete(type='VERT' if mode == 'VERT' else 'EDGE' if mode == 'EDGE' else 'FACE')
     
     # Switch back to OBJECT mode
     bpy.ops.object.mode_set(mode='OBJECT')
@@ -427,31 +467,44 @@ def transform(obj, location=None, rotation=None, scale=None):
 
 index_overlay(True)
 
-base = create_plane("Base", (0,0,0), (10,10,1))
+base = create_plane("Base", (0,0,1), (10,10,1))
 
 add_solidify(base, thickness=1)
 ApplyAll()
 
 add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=0.2)
 add_loop_cut(base, edge_indices=[0, 12, 4, 13], cuts=1, offset=0.2)
+add_loop_cut(base, edge_indices=[1, 18, 27, 3, 7, 25, 17, 5], cuts=1, offset=0.4)
+add_loop_cut(base, edge_indices=[1, 18, 27, 35, 34, 25, 17, 5], cuts=1, offset=0)
+add_loop_cut(base, edge_indices=[1, 18, 27, 35, 34, 25, 17, 5], cuts=1, offset=0)
+add_loop_cut(base, edge_indices=[2, 37, 53, 69, 15, 14, 71, 55, 39, 6], cuts=1, offset=0)
 
-bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)
 
-extrude(base, 'FACE', 3, 'DOWN', 0.1)
+bpy.ops.object.mode_set(mode='EDIT')
+# bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)   
 
-house_body = create_cube("House Body", (-1,1,1), (1.5,1.5,1))
-# tri = create_triangle("Roof", (-1,1,2.5), (1.5,1.5,1))
+extrude(base, 'FACE', 14, 'DOWN', 0.5)
+extrude(base, 'FACE', 22, 'DOWN', 0.5)
+extrude(base, 'FACE', 38, 'DOWN', 0.5)
 
-add_loop_cut(house_body , edge_indices=[11, 5], cuts=1, offset=0)
+delete_poly(base, 'EDGE', 52)
+delete_poly(base, 'EDGE', 60)
+# bpy.ops.object.mode_set(mode='EDIT')
 
-grab_move(house_body, 'EDGE', 14, 'UP', 1)
+# house_body = create_cube("House Body", (-1,1,2), (1.5,1.5,1))
+# # tri = create_triangle("Roof", (-1,1,2.5), (1.5,1.5,1))
 
-apply_color(house_body, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
+# add_loop_cut(house_body , edge_indices=[11, 5], cuts=1, offset=0)
 
-ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
-shade_smooth(ball)
+# grab_move(house_body, 'EDGE', 14, 'UP', 1)
 
-plane = create_plane("Ground", (0,0,10), (20,20,1))
-add_loop_cut(plane, edge_indices=[0, 2], cuts=10, offset=0)
-simple_deform(plane, angle=45, axis='Z', limit=(-0.5, 0.5))
+# apply_color(house_body, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
+
+# ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
+# shade_smooth(ball)
+
+# plane = create_plane("Ground", (0,0,10), (20,20,1))
+# transform(plane,rotation=(0,45,0))
+# add_loop_cut(plane, edge_indices=[0, 2], cuts=10, offset=0)
+# simple_deform(plane, angle=45, axis='Z', limit=(-0.5, 0.5))
 
