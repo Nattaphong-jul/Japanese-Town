@@ -4,6 +4,7 @@ from math import radians
 import math
 import bmesh
 import traceback
+import random
 
 # Reset to Object Mode
 if bpy.ops.object.mode_set.poll():
@@ -615,7 +616,7 @@ grab_move(shrine_small, 'EDGE', 14, 'UP', 0.5)
 # =============================================================================================
 
 # Center Shrine ===============================================================================
-shrine = create_cube("Shrine", location=(1.5,-1.5,2), scale=(2,2,1))
+shrine = create_cube("Shrine", location=(0.56,-1.34,1.9), scale=(2,2,1))
 extrude(shrine, 'FACE', 5, 'UP', 6)
 insert_face(shrine, 6, scale=0.2)
 # =============================================================================================
@@ -625,7 +626,7 @@ shrine_little = create_cube("Shrine Little", location=(-8.4, 7, 1.5), scale=(0.5
 add_loop_cut(shrine_little , edge_indices=[5, 11], cuts=1, offset=0)
 grab_move(shrine_little, 'EDGE', 14, 'UP', 0.5)
 
-# Tree ========================================================================================
+# Tree Function ===============================================================================
 def create_tree(name, location=(0, 0, 0), scale=(1, 1, 1), rotation=(0, 0, 0), leave_color=(1.0,  0.62, 0.76, 1.0), log_color=(0.25, 0.1, 0.04, 1.0)):
     # -- Trunk --
     tree_log = create_cylinder("Tree Trunk", location=(-7, 5, 2.4), scale=(0.5, 0.5, 2), radius=0.4, depth=2, vertices=20)
@@ -658,8 +659,8 @@ def create_tree(name, location=(0, 0, 0), scale=(1, 1, 1), rotation=(0, 0, 0), l
     ])
     transform(tree, location=location, scale=scale, rotation=rotation)
     return tree
-# =============================================================================================
 
+# Create Trees ============
 create_tree("Sakura Tree 1", location=(-8.4, -4, 3.8), scale=(1, 1, 1), rotation=(-10, 0, 90))
 create_tree("Sakura Tree 2", location=(-8.4, -8, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -8, 90))
 create_tree("Sakura Tree 3", location=(-2.82, 1.7, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -10, 0))
@@ -676,11 +677,178 @@ create_tree("Green Tree 2", location=(8, -8, 3.8), scale=(1, 1, 1), rotation=(-1
 create_tree("Green Tree 3", location=(7, -5, 3.8), scale=(1, 1, 1), rotation=(-10, 0, 90), leave_color=(0.0, 0.4, 0.2, 1.0), log_color=(0.2, 0.1, 0.05, 1.0))
 create_tree("Sakura Tree 12", location=(9.5, -6, 3), scale=(0.7, 0.7, 0.7), rotation=(-10, 0, -90))
 
-# apply_color(house_1, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
-# ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
-# shade_smooth(ball)
+# ============================================================================================
 
-# plane = create_plane("Ground", (0,0,10), (20,20,1))
-# transform(plane,rotation=(0,45,0))
-# add_loop_cut(plane, edge_indices=[0, 2], cuts=10, offset=0)
-# simple_deform(plane, angle=45, axis='Z', limit=(-0.5, 0.5))
+# Bushes =====================================================================================
+def create_bush(name, location=(0, 0, 0), scale=(1, 1, 1), rotation=(0, 0, 0), color=(0.0, 0.4, 0.2, 1.0)):
+    bush = create_sphere(name, location=location, scale=scale, radius=1.0, segments=8, rings=6)
+    apply_color(bush, name + "Mat", color=color, roughness=0.8)
+    transform(bush, location=location, scale=scale, rotation=rotation)
+    return bush
+
+# Create Bushes ===========
+create_bush("Bush 1", location=(-7.1, -1.5, 1.2), rotation=(0, 0, 0), scale=(0.40, 0.74, 0.50))
+create_bush("Bush 2", location=(-7.0, 0.02, 1.13), rotation=(0, 0, 0), scale=(0.40, 0.51, 0.50))
+create_bush("Bush 3", location=(-7.1, 1.18, 1.06), rotation=(0, 0, 0), scale=(0.40, 0.43, 0.50))
+create_bush("Bush 4", location=(-7.7, 2.42, 1.23), rotation=(0, 0, 0), scale=(0.69, 0.71, 0.69))
+create_bush("Bush 5", location=(-7.1, 4.20, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 6", location=(-8.6, 3.65, 1.03), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 7", location=(-9.6, 4.46, 1.02), rotation=(0, 0, 0), scale=(0.17, 0.19, 0.29))
+create_bush("Bush 8", location=(-9.7, 3.76, 0.94), rotation=(0, 0, 0), scale=(0.17, 0.19, 0.29))
+create_bush("Bush 9", location=(-9.5, 4.98, 0.93), rotation=(0, 0, 0), scale=(0.17, 0.19, 0.29))
+create_bush("Bush 10", location=(-9.0, 2.37, 1.00), rotation=(-3.9, -3.2, -1.0), scale=(0.17, 0.19, 0.22))
+create_bush("Bush 11", location=(-8.5, 8.65, 1.07), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 12", location=(-7.2, 7.47, 0.84), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 13", location=(-6.2, 8.34, 0.94), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.39))
+create_bush("Bush 14", location=(-7.7, -8.7, 1.06), rotation=(0, 0, 0), scale=(0.69, 0.71, 0.69))
+create_bush("Bush 15", location=(-1.4, 8.14, 0.84), rotation=(0, 0, 0), scale=(0.46, 0.50, 0.77))
+create_bush("Bush 16", location=(-0.0, 7.74, 0.84), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.66))
+create_bush("Bush 17", location=(1.38, 7.13, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 18", location=(2.74, 8.19, 1.23), rotation=(0, 0, 0), scale=(0.69, 0.71, 0.69))
+create_bush("Bush 19", location=(8.91, -3.9, 1.23), rotation=(0, 0, 0), scale=(0.69, 0.71, 0.69))
+create_bush("Bush 20", location=(-0.7, 6.84, 1.2), rotation=(0, 0, -95.0), scale=(0.40, 0.74, 0.50))
+create_bush("Bush 21", location=(8.84, 1.72, 1.2), rotation=(0, 0, -95.0), scale=(0.40, 0.74, 0.50))
+create_bush("Bush 22", location=(2.32, -7.1, 1.01), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 23", location=(7.52, 7.65, 1.23), rotation=(0, 0, 0), scale=(0.69, 0.71, 0.69))
+create_bush("Bush 24", location=(7.47, 6.17, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 25", location=(7.51, 2.01, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 26", location=(6.15, -6.2, 1.06), rotation=(0, 0, 0), scale=(0.40, 0.43, 0.50))
+create_bush("Bush 27", location=(6.57, -7.0, 1.06), rotation=(0, 0, 0), scale=(0.40, 0.43, 0.50))
+create_bush("Bush 28", location=(9.77, 0.83, 1.00), rotation=(-3.9, -3.2, -1.0), scale=(0.17, 0.19, 0.22))
+create_bush("Bush 29", location=(9.73, -0.4, 1.00), rotation=(-3.9, -3.2, -1.0), scale=(0.17, 0.19, 0.22))
+create_bush("Bush 30", location=(-9.6, 1.41, 1.00), rotation=(-3.9, -3.2, -1.0), scale=(0.17, 0.19, 0.22))
+create_bush("Bush 31", location=(-8.7, 1.50, 1.00), rotation=(-3.9, -3.2, -1.0), scale=(0.17, 0.19, 0.22))
+create_bush("Bush 32", location=(-5.2, -9.5, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 33", location=(-2.2, -9.5, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 34", location=(-2.5, -9.0, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 35", location=(-1.9, -7.9, 1.44), rotation=(0, 0, 0), scale=(0.39, 0.43, 0.65))
+create_bush("Bush 36", location=(9.75, 0.20, 1.00), rotation=(-3.9, -3.2, -1.0), scale=(0.17, 0.19, 0.22))
+
+# ============================================================================================
+
+# Floor Tiles ================================================================================
+def create_floor_tile(name, location=(0, 0, 0), scale=(1, 1, 1), rotation=(0, 0, 0), color=(0.5, 0.5, 0.5, 1.0)):
+    tile = create_cube(name, location=location, scale=scale)
+    apply_color(tile, name + "Mat", color=color, roughness=0.8)
+    transform(tile, location=location, scale=scale, rotation=rotation)
+    return tile
+
+# Create Floor Tiles ============
+START_X = -6.2
+STEP_X = 0.6       
+Z_VAL = 0.97       
+SCALE = (0.20, 0.20, 0.05)
+DARK_GREY = (0.15, 0.15, 0.15, 1.0)
+NUM_TILES = 21
+START_Y = -5.6
+tile_index = 1
+
+# Line 1
+for i in range(NUM_TILES):
+    current_x = START_X + (i * STEP_X)
+    randomized_y = START_Y + random.uniform(-0.1, 0.1)
+    randomized_rot_z = random.uniform(-5.0, 5.0)
+    
+    create_floor_tile(
+        name=f"FloorTile_{tile_index}",
+        location=(current_x, randomized_y, Z_VAL),
+        scale=SCALE,
+        rotation=(0, 0, randomized_rot_z),
+        color=DARK_GREY
+    )
+    tile_index += 1
+
+# Line 2
+for i in range(NUM_TILES):
+    current_x = START_X + (i * STEP_X)
+    randomized_y = START_Y + 0.6 + random.uniform(-0.1, 0.1)
+    randomized_rot_z = random.uniform(-5.0, 5.0)
+    
+    create_floor_tile(
+        name=f"FloorTile_{tile_index}",
+        location=(current_x, randomized_y, Z_VAL),
+        scale=SCALE,
+        rotation=(0, 0, randomized_rot_z),
+        color=DARK_GREY
+    )
+    tile_index += 1
+
+# Line 3
+for i in range(NUM_TILES):
+    current_x = START_X + (i * STEP_X)
+    randomized_y = START_Y + 1.2 + random.uniform(-0.1, 0.1)
+    randomized_rot_z = random.uniform(-5.0, 5.0)
+    
+    create_floor_tile(
+        name=f"FloorTile_{tile_index}",
+        location=(current_x, randomized_y, Z_VAL),
+        scale=SCALE,
+        rotation=(0, 0, randomized_rot_z),
+        color=DARK_GREY
+    )
+    tile_index += 1
+
+# Side 2 ===========
+START_Y = -3.81
+END_Y = 5.993
+NUM_TILES = 17
+STEP_Y = (END_Y - START_Y) / (NUM_TILES - 1)
+
+# Starting X positions
+BASE_X_1 = 4.638
+BASE_X_3 = 6.049
+BASE_X_2 = (BASE_X_1 + BASE_X_3) / 2.0
+
+BASE_Z = 0.970
+BASE_ROT_Z = -2.34
+SCALE = (0.20, 0.20, 0.05)
+DARK_GREY = (0.15, 0.15, 0.15, 1.0)
+
+tile_index = 1
+
+# Line 1
+for i in range(NUM_TILES):
+    current_y = START_Y + (i * STEP_Y)
+    randomized_x = BASE_X_1 + random.uniform(-0.1, 0.1)
+    randomized_rot_z = BASE_ROT_Z + random.uniform(-5.0, 5.0)
+    
+    create_floor_tile(
+        name=f"Y_FloorTile_{tile_index}",
+        location=(randomized_x, current_y, BASE_Z),
+        scale=SCALE,
+        rotation=(0, 0, randomized_rot_z),
+        color=DARK_GREY
+    )
+    tile_index += 1
+
+# Line 2
+for i in range(NUM_TILES):
+    current_y = START_Y + (i * STEP_Y)
+    randomized_x = BASE_X_2 + random.uniform(-0.1, 0.1)
+    randomized_rot_z = BASE_ROT_Z + random.uniform(-5.0, 5.0)
+    
+    create_floor_tile(
+        name=f"Y_FloorTile_{tile_index}",
+        location=(randomized_x, current_y, BASE_Z),
+        scale=SCALE,
+        rotation=(0, 0, randomized_rot_z),
+        color=DARK_GREY
+    )
+    tile_index += 1
+
+# Line 3
+for i in range(NUM_TILES):
+    current_y = START_Y + (i * STEP_Y)
+    randomized_x = BASE_X_3 + random.uniform(-0.1, 0.1)
+    randomized_rot_z = BASE_ROT_Z + random.uniform(-5.0, 5.0)
+    current_z = BASE_Z + (0.03 * (i / (NUM_TILES - 1))) 
+    
+    create_floor_tile(
+        name=f"Y_FloorTile_{tile_index}",
+        location=(randomized_x, current_y, current_z),
+        scale=SCALE,
+        rotation=(0, 0, randomized_rot_z),
+        color=DARK_GREY
+    )
+    tile_index += 1
+# ============================================================================================
