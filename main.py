@@ -3,6 +3,7 @@ import os
 from math import radians
 import math
 import bmesh
+import traceback
 
 # Reset to Object Mode
 if bpy.ops.object.mode_set.poll():
@@ -60,6 +61,17 @@ def create_cube(name, location, scale):
     cube.scale = (scale[0], scale[1], scale[2])
     
     return cube
+
+def create_cylinder(name, location, scale, radius=1.0, depth=2.0, vertices=32):
+    # Add Cylinder
+    bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=depth, vertices=vertices, location=location)
+    
+    cylinder = bpy.context.object
+    cylinder.name = name
+    
+    cylinder.scale = (scale[0], scale[1], scale[2])
+    
+    return cylinder
 
 def create_sphere(name, location, scale, radius=1.0, segments=32, rings=16):
     # Add Sphere
@@ -128,25 +140,18 @@ def add_solidify(obj, thickness=0.5):
 
 def simple_deform(obj, angle, axis='Z', mode='TWIST', limit=None):
     if obj and obj.type == 'MESH':
-        # Add the Simple Deform modifier
         mod = obj.modifiers.new(name="SimpleDeform", type='SIMPLE_DEFORM')
         
-        # Set the angle in radians
+        mod.deform_method = mode
         mod.angle = radians(angle)
-        
-        # Set the deformation axis
         mod.deform_axis = axis
         
-        # Set the deformation mode (Not working for now T-T)
-        # mod.mode = mode
-        
-        # Set limits
         if limit is not None:
-            mod.limits[0] = limit[0]  # Lower
-            mod.limits[1] = limit[1]  # Upper
+            mod.limits[0] = limit[0]
+            mod.limits[1] = limit[1]
         
         return mod
-    return 'Something'
+    return None
 
 def join_elements(obj, indices, mode='EDGE'):
     if not obj or obj.type != 'MESH':
@@ -484,6 +489,33 @@ def join_obj(name: str, objects: list):
 
     return bpy.context.view_layer.objects.active
 
+def insert_face(obj, face_index, scale=0.1):
+    if not obj or obj.type != 'MESH':
+        print("Invalid object or not a mesh.")
+        return
+    
+    if face_index < 0 or face_index >= len(obj.data.polygons):
+        print(f"Face index {face_index} out of range.")
+        return
+    
+    # Ensure we are in OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+    
+    # Clear all selections
+    clear_selection(obj)
+    
+    # Select the specified face
+    obj.data.polygons[face_index].select = True
+    
+    # Switch to EDIT mode
+    bpy.ops.object.mode_set(mode='EDIT')
+    
+    # Inset the face using the inset faces operator
+    bpy.ops.mesh.inset(use_boundary=False, use_even_offset=True, use_relative_offset=False, use_edge_rail=False, thickness=scale, depth=0.0, use_outset=False, use_select_inset=True, use_individual=False, use_interpolate=False, release_confirm=False)
+    
+    # Switch back to OBJECT mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+
 
 index_overlay(True)
 
@@ -518,7 +550,12 @@ extrude(base, 'FACE', 38, 'DOWN', 0.5)
 delete_poly(base, 'EDGE', 52)
 delete_poly(base, 'EDGE', 60)
 bevel_vertices_ops(base, [0, 4, 3, 7], offset=0.2, segments=24)   
-# bpy.ops.object.mode_set(mode='EDIT')
+apply_color(base, "BaseGreen", color=(0, 0.6, 0.5, 0), roughness=0.8)
+# =============================================================================================
+
+# Water =======================================================================================
+water = create_plane("Water", location=(0,0,0.52), scale=(7,7,1))
+apply_color(water, "WaterBlue", color=(0.0, 0.4, 1.0, 0.6))
 # =============================================================================================
 
 # House 1 =====================================================================================
@@ -580,12 +617,65 @@ grab_move(shrine_small, 'EDGE', 14, 'UP', 0.5)
 # Center Shrine ===============================================================================
 shrine = create_cube("Shrine", location=(1.5,-1.5,2), scale=(2,2,1))
 extrude(shrine, 'FACE', 5, 'UP', 6)
+insert_face(shrine, 6, scale=0.2)
 # =============================================================================================
 
-cube1 = create_cube("Cube1", location=(20,0,0), scale=(1,1,1))
-cube2 = create_cube("Cube2", location=(40,0,0), scale=(1,1,1))
-two_cube = join_obj("Two Cubes", [cube1, cube2])
-transform(two_cube, location=(20,0,0), rotation=(0,45,0), scale=(1,1,1))
+# Little Shrine ===============================================================================
+shrine_little = create_cube("Shrine Little", location=(-8.4, 7, 1.5), scale=(0.5,0.6,0.5))
+add_loop_cut(shrine_little , edge_indices=[5, 11], cuts=1, offset=0)
+grab_move(shrine_little, 'EDGE', 14, 'UP', 0.5)
+
+# Tree ========================================================================================
+def create_tree(name, location=(0, 0, 0), scale=(1, 1, 1), rotation=(0, 0, 0), leave_color=(1.0,  0.62, 0.76, 1.0), log_color=(0.25, 0.1, 0.04, 1.0)):
+    # -- Trunk --
+    tree_log = create_cylinder("Tree Trunk", location=(-7, 5, 2.4), scale=(0.5, 0.5, 2), radius=0.4, depth=2, vertices=20)
+    add_loop_cut(tree_log, edge_indices=[2] + list(range(3, 59, 3)), cuts=6, offset=0)
+    simple_deform(tree_log, angle=-60, axis='X', mode='BEND', limit=(0, 1))
+    ApplyAll()
+    apply_color(tree_log, "BarkBrown", color=log_color, roughness=0.9)
+
+    # -- Leaves (Sakura Pink, Low Poly, Overlapping) --
+    leaves_main  = create_sphere("Leaves Main",  location=(-7.0, 5.0, 4.0), scale=(1.3, 1.3, 1.1), radius=1.0, segments=8, rings=6)
+    leaves_top   = create_sphere("Leaves Top",   location=(-7.2, 4.8, 4.9), scale=(1.0, 1.0, 0.9), radius=1.0, segments=8, rings=6)
+    leaves_left  = create_sphere("Leaves Left",  location=(-8.3, 4.6, 3.7), scale=(1.0, 1.0, 0.9), radius=1.0, segments=8, rings=6)
+    leaves_right = create_sphere("Leaves Right", location=(-5.8, 5.3, 3.7), scale=(1.0, 1.0, 0.9), radius=1.0, segments=8, rings=6)
+    leaves_back  = create_sphere("Leaves Back",  location=(-7.0, 6.3, 3.5), scale=(1.0, 1.0, 0.8), radius=1.0, segments=8, rings=6)
+    leaves_front = create_sphere("Leaves Front", location=(-7.0, 3.8, 3.5), scale=(1.0, 1.0, 0.8), radius=1.0, segments=8, rings=6)
+
+    apply_color(leaves_main,  "SakuraPink", color=leave_color, roughness=0.8)
+    apply_color(leaves_top,   "SakuraPink", color=leave_color, roughness=0.8)
+    apply_color(leaves_left,  "SakuraPink", color=leave_color, roughness=0.8)
+    apply_color(leaves_right, "SakuraPink", color=leave_color, roughness=0.8)
+    apply_color(leaves_back,  "SakuraPink", color=leave_color, roughness=0.85)
+    apply_color(leaves_front, "SakuraPink", color=leave_color, roughness=0.85)
+
+    # -- Join everything into one object --
+    tree = join_obj(name, [
+        leaves_main, leaves_top,
+        leaves_left, leaves_right,
+        leaves_back, leaves_front,
+        tree_log
+    ])
+    transform(tree, location=location, scale=scale, rotation=rotation)
+    return tree
+# =============================================================================================
+
+create_tree("Sakura Tree 1", location=(-8.4, -4, 3.8), scale=(1, 1, 1), rotation=(-10, 0, 90))
+create_tree("Sakura Tree 2", location=(-8.4, -8, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -8, 90))
+create_tree("Sakura Tree 3", location=(-2.82, 1.7, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -10, 0))
+create_tree("Sakura Tree 4", location=(-9.8, 3, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -8, 0))
+create_tree("Sakura Tree 5", location=(-9.4, 6, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -8, 70))
+create_tree("Sakura Tree 6", location=(-9.6, 9.4, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -10, 10))
+create_tree("Sakura Tree 7", location=(-7, 9.6, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -13, -80))
+create_tree("Sakura Tree 8", location=(0, 9.4, 3), scale=(0.7, 0.7, 0.7), rotation=(0, -10, -20))
+create_tree("Sakura Tree 9", location=(2, 9.6, 3), scale=(0.7, 0.7, 0.7), rotation=(-10, 0, -10))
+create_tree("Sakura Tree 10", location=(8.2, 9.6, 4), scale=(1, 1, 1), rotation=(-10, 0, -30))
+create_tree("Sakura Tree 11", location=(3.86, 3, 2.6), scale=(0.6, 0.6, 0.6), rotation=(-10, 0, 90))
+create_tree("Green Tree", location=(9.7, 7, 4), scale=(1, 1, 1), rotation=(-10, 0, -90), leave_color=(0.0, 0.4, 0.2, 1.0), log_color=(0.2, 0.1, 0.05, 1.0))
+create_tree("Green Tree 2", location=(8, -8, 3.8), scale=(1, 1, 1), rotation=(-10, 0, 0), leave_color=(0.0, 0.4, 0.2, 1.0), log_color=(0.2, 0.1, 0.05, 1.0))
+create_tree("Green Tree 3", location=(7, -5, 3.8), scale=(1, 1, 1), rotation=(-10, 0, 90), leave_color=(0.0, 0.4, 0.2, 1.0), log_color=(0.2, 0.1, 0.05, 1.0))
+create_tree("Sakura Tree 12", location=(9.5, -6, 3), scale=(0.7, 0.7, 0.7), rotation=(-10, 0, -90))
+
 # apply_color(house_1, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
 # ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
 # shade_smooth(ball)
@@ -594,4 +684,3 @@ transform(two_cube, location=(20,0,0), rotation=(0,45,0), scale=(1,1,1))
 # transform(plane,rotation=(0,45,0))
 # add_loop_cut(plane, edge_indices=[0, 2], cuts=10, offset=0)
 # simple_deform(plane, angle=45, axis='Z', limit=(-0.5, 0.5))
-
