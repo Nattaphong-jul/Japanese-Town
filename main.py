@@ -959,9 +959,28 @@ add_light("point_light_5", type='POINT', location=(-7.41, -5.71, 2.275), rotatio
 add_light("point_light_6", type='POINT', location=(-7.93, 4.597, 2.662), rotation=(0, 0, 0), energy=pointlight_energy, color=pointlight_color)
 # =============================================================================================
 
+# World Color =================================================================================
+def set_world_color(color=(1.0, 1.0, 1.0, 1.0), strength=1.0):
+
+    if not bpy.context.scene.world:
+        bpy.context.scene.world = bpy.data.worlds.new("World")
+    
+    world = bpy.context.scene.world
+    world.use_nodes = True
+
+    bg_node = world.node_tree.nodes.get("Background")
+    
+    if bg_node:
+        bg_node.inputs[0].default_value = color
+        bg_node.inputs[1].default_value = strength
+
+set_world_color(color=(0.804, 0.691, 0.598, 1.0), strength=1.0)
+# =============================================================================
+
 # Camera Setup
 bpy.ops.object.camera_add(location=(-40, 40, 30))
 camera = bpy.context.object
 camera.name = "Camera"
 bpy.context.scene.camera = camera
 transform(camera, rotation=(65, 0, -135))
+
