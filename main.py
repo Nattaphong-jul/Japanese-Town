@@ -984,3 +984,26 @@ camera.name = "Camera"
 bpy.context.scene.camera = camera
 transform(camera, rotation=(65, 0, -135))
 
+
+# Create Empty Plain Axes at the origin
+bpy.ops.object.empty_add(type='PLAIN_AXES', location=(0, 0, 0))
+empty = bpy.context.object
+empty.name = "Camera_Pivot"
+
+# Parent the Camera to the Empty (keep camera's transform)
+camera.select_set(True)
+bpy.context.view_layer.objects.active = empty
+bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
+
+# Animate the Empty rotating 360° around Z axis
+scene = bpy.context.scene
+scene.frame_start = 1
+scene.frame_end = 120
+
+scene.frame_set(1)
+empty.rotation_euler = (0, 0, math.radians(0))
+empty.keyframe_insert(data_path="rotation_euler", index=2)  # index 2 = Z I guess
+
+scene.frame_set(120)
+empty.rotation_euler = (0, 0, math.radians(360)) # 360 degree
+empty.keyframe_insert(data_path="rotation_euler", index=2)
