@@ -464,6 +464,26 @@ def transform(obj, location=None, rotation=None, scale=None):
         obj.scale = scale
     return obj
 
+def join_obj(name: str, objects: list):
+    # Deselect all
+    bpy.ops.object.select_all(action='DESELECT')
+
+    # Select all target mesh objects
+    for obj in objects:
+        if obj.type == 'MESH':
+            obj.select_set(True)
+
+    # Set the first object as active
+    bpy.context.view_layer.objects.active = objects[0]
+
+    # Join into single object
+    bpy.ops.object.join()
+
+    # Rename the result
+    bpy.context.view_layer.objects.active.name = name
+
+    return bpy.context.view_layer.objects.active
+
 
 index_overlay(True)
 
@@ -481,7 +501,7 @@ base = create_plane("Base", (0,0,1), (10,10,1))
 add_solidify(base, thickness=1)
 ApplyAll()
 
-add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=-0.3)
+add_loop_cut(base, edge_indices=[0, 2, 4, 6], cuts=1, offset=-0.2)
 add_loop_cut(base, edge_indices=[0, 12, 4, 13], cuts=1, offset=0)
 add_loop_cut(base, edge_indices=[1, 18, 27, 3, 7, 25, 17, 5], cuts=1, offset=0.4)
 add_loop_cut(base, edge_indices=[1, 18, 27, 35, 34, 25, 17, 5], cuts=1, offset=0)
@@ -562,7 +582,10 @@ shrine = create_cube("Shrine", location=(1.5,-1.5,2), scale=(2,2,1))
 extrude(shrine, 'FACE', 5, 'UP', 6)
 # =============================================================================================
 
-
+cube1 = create_cube("Cube1", location=(20,0,0), scale=(1,1,1))
+cube2 = create_cube("Cube2", location=(40,0,0), scale=(1,1,1))
+two_cube = join_obj("Two Cubes", [cube1, cube2])
+transform(two_cube, location=(20,0,0), rotation=(0,45,0), scale=(1,1,1))
 # apply_color(house_1, "SimpleGreen", color=(0.0, 1.0, 0.0, 1.0), emit_strength=1.0)
 # ball = create_sphere("Ball", (2,2,1), (0.5,0.5,0.5))
 # shade_smooth(ball)
