@@ -520,14 +520,6 @@ def insert_face(obj, face_index, scale=0.1):
 
 index_overlay(True)
 
-# Camera Setup
-bpy.ops.object.camera_add(location=(-40, 40, 30))
-camera = bpy.context.object
-camera.name = "Camera"
-bpy.context.scene.camera = camera
-transform(camera, rotation=(65, 0, -135))
-
-
 # Base ======================================================================================
 base = create_plane("Base", (0,0,1), (10,10,1))
 
@@ -563,6 +555,13 @@ apply_color(water, "WaterBlue", color=(0.0, 0.4, 1.0, 0.6))
 house_1 = create_cube("House 1", location=(-4.5,-7.5,2), scale=(1.5,1.5,1))
 add_loop_cut(house_1 , edge_indices=[2, 8], cuts=1, offset=0)
 grab_move(house_1, 'EDGE', 14, 'UP', 1)
+apply_color(house_1, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_1 = create_plane("House 1 Roof", location=(-4.5, -7.5, 3), scale=(2, 2, 1))
+apply_color(roof_1, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(roof_1, edge_indices=[0, 2], cuts=1, offset=0)
+grab_move(roof_1, 'EDGE', 6, 'UP', 1)
+add_solidify(roof_1, thickness=0.35)
 
 # =============================================================================================
 
@@ -570,6 +569,13 @@ grab_move(house_1, 'EDGE', 14, 'UP', 1)
 house_2 = create_cube("House 2", location=(0,-8,2), scale=(1.5,1.5,1))
 add_loop_cut(house_2 , edge_indices=[5, 11], cuts=1, offset=0)
 grab_move(house_2, 'EDGE', 14, 'UP', 1)
+apply_color(house_2, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_2 = create_plane("House 2 Roof", location=(0, -8, 3), scale=(2, 2, 1))
+apply_color(roof_2, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(roof_2, edge_indices=[1, 3], cuts=1, offset=0)
+grab_move(roof_2, 'EDGE', 6, 'UP', 1)
+add_solidify(roof_2, thickness=0.35)
 
 # =============================================================================================
 
@@ -577,6 +583,13 @@ grab_move(house_2, 'EDGE', 14, 'UP', 1)
 house_3 = create_cube("House 3", location=(4.5,-8,2), scale=(1.5,1.5,1))
 add_loop_cut(house_3 , edge_indices=[2, 8], cuts=1, offset=0)
 grab_move(house_3, 'EDGE', 14, 'UP', 1)
+apply_color(house_3, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_3 = create_plane("House 3 Roof", location=(4.5, -8, 3), scale=(2, 2, 1))
+apply_color(roof_3, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(roof_3, edge_indices=[0, 2], cuts=1, offset=0)
+grab_move(roof_3, 'EDGE', 6, 'UP', 1)
+add_solidify(roof_3, thickness=0.35)
 
 # =============================================================================================
 
@@ -584,6 +597,13 @@ grab_move(house_3, 'EDGE', 14, 'UP', 1)
 house_4 = create_cube("House 4", location=(8,-1,2), scale=(1.5,2,1))
 add_loop_cut(house_4 , edge_indices=[2, 8], cuts=1, offset=0)
 grab_move(house_4, 'EDGE', 14, 'UP', 1)
+apply_color(house_4, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_4 = create_plane("House 4 Roof", location=(8, -1, 3), scale=(2, 2.5, 1))
+apply_color(roof_4, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(roof_4, edge_indices=[0, 2], cuts=1, offset=0)
+grab_move(roof_4, 'EDGE', 6, 'UP', 1)
+add_solidify(roof_4, thickness=0.35)
 
 # =============================================================================================
 
@@ -591,6 +611,13 @@ grab_move(house_4, 'EDGE', 14, 'UP', 1)
 house_5 = create_cube("House 5", location=(8,4,2), scale=(1.5,1.5,1))
 add_loop_cut(house_5 , edge_indices=[2, 8], cuts=1, offset=0)
 grab_move(house_5, 'EDGE', 14, 'UP', 1)
+apply_color(house_5, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_5 = create_plane("House 5 Roof", location=(8, 4, 3), scale=(2, 2, 1))
+apply_color(roof_5, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(roof_5, edge_indices=[0, 2], cuts=1, offset=0)
+grab_move(roof_5, 'EDGE', 6, 'UP', 1)
+add_solidify(roof_5, thickness=0.35)
 
 # =============================================================================================
 
@@ -598,6 +625,13 @@ grab_move(house_5, 'EDGE', 14, 'UP', 1)
 house_6 = create_cube("House 6", location=(5,8,2), scale=(1.5,1.5,1))
 add_loop_cut(house_6 , edge_indices=[5, 11], cuts=1, offset=0)
 grab_move(house_6, 'EDGE', 14, 'UP', 1)
+apply_color(house_6, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_6 = create_plane("House 6 Roof", location=(5, 8, 3), scale=(2, 2, 1))
+apply_color(roof_6, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(roof_6, edge_indices=[1, 3], cuts=1, offset=0)
+grab_move(roof_6, 'EDGE', 6, 'UP', 1)
+add_solidify(roof_6, thickness=0.35)
 
 # =============================================================================================
 
@@ -605,6 +639,13 @@ grab_move(house_6, 'EDGE', 14, 'UP', 1)
 house_7 = create_cube("House 7", location=(-4,8,2), scale=(1.5,1.5,1))
 add_loop_cut(house_7 , edge_indices=[2, 8], cuts=1, offset=0)
 grab_move(house_7, 'EDGE', 14, 'UP', 1)
+apply_color(house_7, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_7 = create_plane("House 7 Roof", location=(-4, 8, 3), scale=(2, 2, 1))
+apply_color(roof_7, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(roof_7, edge_indices=[0, 2], cuts=1, offset=0)
+grab_move(roof_7, 'EDGE', 6, 'UP', 1)
+add_solidify(roof_7, thickness=0.35)
 
 # =============================================================================================
 
@@ -612,19 +653,40 @@ grab_move(house_7, 'EDGE', 14, 'UP', 1)
 shrine_small = create_cube("Shrine Small", location=(-8.5,0,1.5), scale=(0.8,1,0.5))
 add_loop_cut(shrine_small , edge_indices=[5, 11], cuts=1, offset=0)
 grab_move(shrine_small, 'EDGE', 14, 'UP', 0.5)
+apply_color(shrine_small, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+small_shrine_roof = create_plane("Shrine Small Roof", location=(-8.5, 0, 2), scale=(1.2, 1.2, 1))
+apply_color(small_shrine_roof, "GreenRoof", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+add_loop_cut(small_shrine_roof, edge_indices=[1, 3], cuts=1, offset=0)
+grab_move(small_shrine_roof, 'EDGE', 6, 'UP', 0.5)
+add_solidify(small_shrine_roof, thickness=0.2)
 
 # =============================================================================================
 
 # Center Shrine ===============================================================================
-shrine = create_cube("Shrine", location=(0.56,-1.34,1.9), scale=(2,2,1))
+shrine_location = (0.56, -1.34, 1.9)
+shrine = create_cube("Shrine", location=shrine_location, scale=(2,2,1))
 extrude(shrine, 'FACE', 5, 'UP', 6)
-insert_face(shrine, 6, scale=0.2)
+simple_deform(shrine, angle=-20, axis='Z', mode='TAPER')
+apply_color(shrine, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
+
+roof_Y = 7
+for i in range(3):
+    shrine_roof = create_plane(f"Shrine Roof {i + 1}", location=(shrine_location[0], shrine_location[1], shrine_location[2] + roof_Y), scale=(3,3,1))
+    add_solidify(shrine_roof, thickness=0.01)
+    ApplyAll()
+    insert_face(shrine_roof, 0, scale=0.98)
+    grab_move(shrine_roof, 'FACE', 0, 'UP', 2)
+    apply_color(shrine_roof, f"GreenRoof {i + 1}", color=(0.1, 0.4, 0.2, 1), roughness=0.9)
+    roof_Y -= 3
+
 # =============================================================================================
 
 # Little Shrine ===============================================================================
 shrine_little = create_cube("Shrine Little", location=(-8.4, 7, 1.5), scale=(0.5,0.6,0.5))
 add_loop_cut(shrine_little , edge_indices=[5, 11], cuts=1, offset=0)
 grab_move(shrine_little, 'EDGE', 14, 'UP', 0.5)
+apply_color(shrine_little, "Brown", color=(0.4, 0.2, 0.1, 1), roughness=0.9)
 
 # Tree Function ===============================================================================
 def create_tree(name, location=(0, 0, 0), scale=(1, 1, 1), rotation=(0, 0, 0), leave_color=(1.0,  0.62, 0.76, 1.0), log_color=(0.25, 0.1, 0.04, 1.0)):
@@ -643,12 +705,12 @@ def create_tree(name, location=(0, 0, 0), scale=(1, 1, 1), rotation=(0, 0, 0), l
     leaves_back  = create_sphere("Leaves Back",  location=(-7.0, 6.3, 3.5), scale=(1.0, 1.0, 0.8), radius=1.0, segments=8, rings=6)
     leaves_front = create_sphere("Leaves Front", location=(-7.0, 3.8, 3.5), scale=(1.0, 1.0, 0.8), radius=1.0, segments=8, rings=6)
 
-    apply_color(leaves_main,  "SakuraPink", color=leave_color, roughness=0.8)
-    apply_color(leaves_top,   "SakuraPink", color=leave_color, roughness=0.8)
-    apply_color(leaves_left,  "SakuraPink", color=leave_color, roughness=0.8)
-    apply_color(leaves_right, "SakuraPink", color=leave_color, roughness=0.8)
-    apply_color(leaves_back,  "SakuraPink", color=leave_color, roughness=0.85)
-    apply_color(leaves_front, "SakuraPink", color=leave_color, roughness=0.85)
+    apply_color(leaves_main,  "SakuraPink", color=leave_color, roughness=0.8, emit_strength=2)
+    apply_color(leaves_top,   "SakuraPink", color=leave_color, roughness=0.8, emit_strength=2)
+    apply_color(leaves_left,  "SakuraPink", color=leave_color, roughness=0.8, emit_strength=2)
+    apply_color(leaves_right, "SakuraPink", color=leave_color, roughness=0.8, emit_strength=2)
+    apply_color(leaves_back,  "SakuraPink", color=leave_color, roughness=0.85, emit_strength=2)
+    apply_color(leaves_front, "SakuraPink", color=leave_color, roughness=0.85, emit_strength=2)
 
     # -- Join everything into one object --
     tree = join_obj(name, [
@@ -852,3 +914,54 @@ for i in range(NUM_TILES):
     )
     tile_index += 1
 # ============================================================================================
+
+# Lighting Setup =============================================================================
+def add_light(name, type, location=(0, 0, 0), rotation=(0, 0, 0), energy=1000, color=(1.0, 1.0, 1.0), angle=180):
+    type = type.upper()
+    if type not in ('POINT', 'AREA'):
+        print(f"[add_light] Unsupported light type '{type}'. Use 'POINT' or 'AREA'.")
+        return None
+ 
+    # Create the light data block
+    light_data = bpy.data.lights.new(name=name + "_data", type=type)
+    light_data.energy = energy
+    light_data.color = (color[0], color[1], color[2])
+ 
+    # Area-light-specific: spread angle
+    if type == 'AREA':
+        light_data.spread = radians(angle)
+ 
+    # Create the object and link it to the scene
+    light_obj = bpy.data.objects.new(name=name, object_data=light_data)
+    bpy.context.collection.objects.link(light_obj)
+ 
+    # Set transform
+    light_obj.location = location
+    light_obj.rotation_euler = (radians(rotation[0]), radians(rotation[1]), radians(rotation[2]))
+ 
+    return light_obj
+
+# Adding Lights
+add_light("area_light_1", type='AREA', location=(13.96, 2.416, 9.585), rotation=(-21.1, 48.0, -6.33), energy=1077.400, color=(0.20, 0.30, 0.65), angle=180)
+add_light("area_light_2", type='AREA', location=(-7.79, 0.016, 12.32), rotation=(-5.10, -35.4, -1.75), energy=1077.400, color=(0.20, 0.30, 0.65), angle=180)
+add_light("area_light_3", type='AREA', location=(0.992, 17.10, 8.050), rotation=(-65.3, 2.549, -3.33), energy=2233.100, color=(0.65, 0.70, 0.90), angle=180)
+add_light("area_light_4", type='AREA', location=(0.884, -12.9, 15.06), rotation=(48.96, -6.03, -6.09), energy=1077.400, color=(0.35, 0.25, 0.65), angle=180)
+
+# Point lights
+pointlight_color = (0.45, 0.85, 0.95)
+pointlight_energy = 324
+
+add_light("point_light_1", type='POINT', location=(-3.62, -5.14, 2.662), rotation=(0, 0, 0), energy=pointlight_energy, color=pointlight_color)
+add_light("point_light_2", type='POINT', location=(3.872, -5.14, 2.662), rotation=(0, 0, 0), energy=pointlight_energy, color=pointlight_color)
+add_light("point_light_3", type='POINT', location=(3.872, 0.445, 2.662), rotation=(0, 0, 0), energy=pointlight_energy, color=pointlight_color)
+add_light("point_light_4", type='POINT', location=(3.872, 4.597, 2.662), rotation=(0, 0, 0), energy=pointlight_energy, color=pointlight_color)
+add_light("point_light_5", type='POINT', location=(-7.41, -5.71, 2.275), rotation=(0, 0, 0), energy=pointlight_energy, color=pointlight_color)
+add_light("point_light_6", type='POINT', location=(-7.93, 4.597, 2.662), rotation=(0, 0, 0), energy=pointlight_energy, color=pointlight_color)
+# =============================================================================================
+
+# Camera Setup
+bpy.ops.object.camera_add(location=(-40, 40, 30))
+camera = bpy.context.object
+camera.name = "Camera"
+bpy.context.scene.camera = camera
+transform(camera, rotation=(65, 0, -135))
