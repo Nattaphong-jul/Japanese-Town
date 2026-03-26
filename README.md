@@ -5,4 +5,7 @@ This challenge requires me to create a Blender Python script that generates a sc
 ![Reference](Reference.png)
 
 ### Final Image 🥹
-![FinalRand](Render/Final_Render.gif)
+![FinalRand](Render/Frames/0020.png)
+
+### Animated Gif
+![AnimatedGif](Render/final_render_compress.gif)
